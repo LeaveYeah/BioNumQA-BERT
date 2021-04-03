@@ -29,7 +29,7 @@ from torch.utils.data import DataLoader, RandomSampler, SequentialSampler
 from torch.utils.data.distributed import DistributedSampler
 from tqdm import tqdm, trange
 
-from models import BioNumQABertForQuestionAnswering
+from modeling import BioNumQABertForQuestionAnswering
 from processor import bionumqa_convert_examples_to_features, BioNumQAProcessor
 from transformers import (
     WEIGHTS_NAME,

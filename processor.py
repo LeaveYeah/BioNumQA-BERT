@@ -289,7 +289,9 @@ def bionumqa_convert_example_to_features(example, max_seq_length, doc_stride, ma
         )
     return features
 
-
+def squad_convert_example_to_features_init(tokenizer_for_convert):
+    global tokenizer
+    tokenizer = tokenizer_for_convert
 
 def bionumqa_convert_examples_to_features(
     examples,
@@ -352,7 +354,7 @@ def bionumqa_convert_examples_to_features(
             tqdm(
                 p.imap(annotate_, examples, chunksize=32),
                 total=len(examples),
-                desc="convert squad examples to features",
+                desc="convert bionumqa examples to features",
                 disable=not tqdm_enabled,
             )
         )
@@ -538,24 +540,39 @@ class BioNumQAProcessor(SquadV1Processor):
 
                     if not is_impossible:
                         if is_training:
-                            answer = qa["answers"][0]
-                            answer_text = answer["text"]
-                            start_position_character = answer["answer_start"]
+                            for i in range(len(qa['answers'])):
+                                answer = qa["answers"][i]
+                                answer_text = answer["text"]
+                                start_position_character = answer["answer_start"]
+                                
+                                example = BioNumQAExample(
+                                    qas_id=qas_id,
+                                    question_text=question_text,
+                                    context_text=context_text,
+                                    answer_text=answer_text,
+                                    start_position_character=start_position_character,
+                                    title=title,
+                                    is_impossible=is_impossible,
+                                    answers=answers,
+                                )
+
+                                examples.append(example)
+                                
                         else:
                             answers = qa["answers"]
 
-                    example = BioNumQAExample(
-                        qas_id=qas_id,
-                        question_text=question_text,
-                        context_text=context_text,
-                        answer_text=answer_text,
-                        start_position_character=start_position_character,
-                        title=title,
-                        is_impossible=is_impossible,
-                        answers=answers,
-                    )
+                            example = BioNumQAExample(
+                                qas_id=qas_id,
+                                question_text=question_text,
+                                context_text=context_text,
+                                answer_text=answer_text,
+                                start_position_character=start_position_character,
+                                title=title,
+                                is_impossible=is_impossible,
+                                answers=answers,
+                            )
 
-                    examples.append(example)
+                            examples.append(example)
         return examples
     
 def get_orig_doc_tok_map(orig_doc_tokens_, orig_doc_tokens):
