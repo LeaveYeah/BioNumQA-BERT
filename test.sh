@@ -2,8 +2,11 @@
 BASEDIR="."
 DATA_DIR="$BASEDIR/data/bnqa_fold"
 OUTPUT_DIR="$BASEDIR/out/bnqa_fold"
+if ! [ -d "$BASEDIR/out" ]; then
+mkdir "$BASEDIR/out"
+fi
 
-MODEL_DIR="$BASEDIR/pretrained_weights/"
+# MODEL_DIR="$BASEDIR/pretrained_weights/"
 
 for i in {0..9}
 do
